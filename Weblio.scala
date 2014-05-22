@@ -19,7 +19,6 @@ object Weblio {
     main.getElementsByClass("kiji")
   }
 }
-
 object Anki {
   val convert = (words: Seq[(String, String)]) => {
     words.map {
@@ -27,14 +26,13 @@ object Anki {
     }.mkString("\n")
   }
 }
-
 object Main {
   import Weblio._
   import Anki._
   def main(args: Array[String]) = {
-    printWords(args)
+    val inputs = Iterator.continually(readLine()).takeWhile(_ != null)
+    printWords(inputs.toSeq)
   }
-
   val createCard = articles andThen (_.flatMap(_.map(definition).collect {
     case scala.util.Success(s) => s
   }.mkString("\n") match {
@@ -47,7 +45,6 @@ object Main {
   val printWords = convertWords andThen {
     case (successes, failures) => {
       failures.foreach(System.err.println)
-
       successes.collect {
         case (word, util.Success(defined)) => word -> defined
       }.toBuffer |> convert |> print
